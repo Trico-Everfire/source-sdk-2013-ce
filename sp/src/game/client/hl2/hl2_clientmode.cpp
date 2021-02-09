@@ -10,6 +10,10 @@
 #include "clientmode_hlnormal.h"
 #include "panelmetaclassmgr.h"
 
+#ifdef SDK2013CE
+#include "sdk2013ce_discord_rpc.h"
+#endif
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
@@ -64,6 +68,10 @@ void CHLModeManager::CreateMove( float flInputSampleTime, CUserCmd *cmd )
 void CHLModeManager::LevelInit( const char *newmap )
 {
 	g_pClientMode->LevelInit( newmap );
+
+#ifdef SDK2013CE
+	g_DiscordRPC.LevelInit( newmap );
+#endif 
 }
 
 void CHLModeManager::LevelShutdown( void )

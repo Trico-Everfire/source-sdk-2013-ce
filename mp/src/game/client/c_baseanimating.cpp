@@ -3605,11 +3605,10 @@ bool C_BaseAnimating::DispatchMuzzleEffect( const char *options, bool isFirstPer
 
 	// Get the first parameter
 #ifdef SDK2013CE
-	p = nexttoken( token, p, ' ', sizeof(token) );
+	p = nexttoken(token, p, ' ', sizeof(token));
 #else
 	p = nexttoken( token, p, ' ' );
 #endif
-
 	// Find the weapon type
 	if ( token[0] ) 
 	{
@@ -3653,10 +3652,11 @@ bool C_BaseAnimating::DispatchMuzzleEffect( const char *options, bool isFirstPer
 
 	// Get the second parameter
 #ifdef SDK2013CE
-	p = nexttoken( token, p, ' ', sizeof(token) );
+	p = nexttoken(token, p, ' ', sizeof(token));
 #else
 	p = nexttoken( token, p, ' ' );
-#endif
+#endif // SDK2013CE
+
 
 	int	attachmentIndex = -1;
 
@@ -3767,11 +3767,13 @@ void C_BaseAnimating::FireEvent( const Vector& origin, const QAngle& angles, int
 
 			// Get the particle effect name
 			const char *p = options;
+
 		#ifdef SDK2013CE
 			p = nexttoken(token, p, ' ', sizeof(token));
 		#else
 			p = nexttoken(token, p, ' ');
 		#endif
+
 
 			const char* mtoken = ModifyEventParticles( token );
 			if ( !mtoken || mtoken[0] == '\0' )
@@ -3784,7 +3786,6 @@ void C_BaseAnimating::FireEvent( const Vector& origin, const QAngle& angles, int
 		#else
 			p = nexttoken(token, p, ' ');
 		#endif
-
 			iAttachType = GetAttachTypeFromString( token );
 			if ( iAttachType == -1 )
 			{
@@ -4069,6 +4070,7 @@ void C_BaseAnimating::FireObsoleteEvent( const Vector& origin, const QAngle& ang
 		#else
 			p = nexttoken(token, p, ' ');
 		#endif
+
 			iParam = token[0] ? atoi(token) : 0;
 
 			if ( iAttachment != -1 && m_Attachments.Count() >= iAttachment )
