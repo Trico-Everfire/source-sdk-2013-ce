@@ -173,6 +173,7 @@ void CHL2MP_Player::GiveAllItems( void )
 	CBasePlayer::GiveAmmo( 1,	"grenade" );
 	CBasePlayer::GiveAmmo( 2,	"slam" );
 
+	GiveNamedItem( "weapon_nullifactor" );
 	GiveNamedItem( "weapon_crowbar" );
 	GiveNamedItem( "weapon_stunstick" );
 	GiveNamedItem( "weapon_pistol" );
@@ -213,6 +214,7 @@ void CHL2MP_Player::GiveDefaultItems( void )
 		GiveNamedItem( "weapon_crowbar" );
 	}
 	
+	GiveNamedItem("weapon_nullifactor");
 	GiveNamedItem( "weapon_pistol" );
 	GiveNamedItem( "weapon_smg1" );
 	GiveNamedItem( "weapon_frag" );
