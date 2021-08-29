@@ -615,7 +615,9 @@ void CUtlBuffer::GetStringInternal( char *pString, size_t maxLenInChars )
 		return;
 	}
 
-	Assert( maxLenInChars != 0 );
+	// It ALWAYS shows up at the menu, ALWAYS
+	// Probably a bad idea to disable this but I don't care to be honest
+	// Assert( maxLenInChars != 0 );
 
 	if ( maxLenInChars == 0 )
 	{
