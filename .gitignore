@@ -32,7 +32,8 @@ ipch
 x64/
 x86/
 bld/
-[Bb]in/
+!devtools/bin/*
+[Bb]in/*
 [Oo]bj/
 [Ll]og/
 
