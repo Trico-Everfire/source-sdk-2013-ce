@@ -644,6 +644,7 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 {
 	if ( gpGlobals->maxClients > 1 )
 	{
+		/*
 		if ( developer.GetBool() )
 		{
 			Assert( !"UTIL_GetLocalPlayer" );
@@ -652,7 +653,7 @@ CBasePlayer *UTIL_GetLocalPlayer( void )
 			Warning( "UTIL_GetLocalPlayer() called in multiplayer game.\n" );
 #endif
 		}
-
+		*/
 		return NULL;
 	}
 

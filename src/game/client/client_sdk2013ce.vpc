@@ -15,7 +15,7 @@ $Configuration
 	$Compiler
 	{
 		$AdditionalIncludeDirectories		"$BASE;$SRCDIR\game\shared\hl2;$SRCDIR\game\shared\hl2mp;$SRCDIR\game\shared\sdk2013ce;.\hl2;.\hl2\elements;.\hl2mp;hl2mp\ui;.\sdk2013ce"
-		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL;SDK2013CE"
+		$PreprocessorDefinitions			"$BASE;HL2MP;HL2_CLIENT_DLL;SDK2013CE;SOURCE_2013"
 	}
 }
 
@@ -23,6 +23,23 @@ $Project "Client"
 {
 	$Folder	"Source Files"
 	{
+		$Folder "Shader Editor" [$WIN32]
+		{
+			$Folder	"Header Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ISEdit_ModelRender.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\IVShaderEditor.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.h"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.h"
+			}
+			
+			$Folder	"Implementation Files"
+			{
+				$File	"$SRCDIR\game\client\ShaderEditor\ShaderEditorSystem.cpp"
+				$File	"$SRCDIR\game\client\ShaderEditor\SEdit_ModelRender.cpp"
+			}
+		}
+	
 		-$File	"$SRCDIR\game\shared\weapon_parse_default.cpp"
 
 		$File	"c_team_objectiveresource.cpp"
@@ -81,6 +98,8 @@ $Project "Client"
 			$File	"hl2\c_vehicle_cannon.cpp"
 			$File	"hl2\c_vehicle_crane.cpp"
 			$File	"hl2\c_vehicle_crane.h"
+			$File	"c_vehicle_jeep.cpp"
+			$File	"c_vehicle_jeep.h"
 			$File	"hl2\c_vehicle_prisoner_pod.cpp"
 			$File	"hl2\c_weapon__stubs_hl2.cpp"
 			$File	"hl2\c_weapon_crossbow.cpp"
