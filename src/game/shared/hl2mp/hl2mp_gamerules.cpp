@@ -295,7 +295,7 @@ void CHL2MPRules::PlayerKilled( CBasePlayer *pVictim, const CTakeDamageInfo &inf
 // Input   :
 // Output  :
 //------------------------------------------------------------------------------
-void CHL2MP::InitDefaultAIRelationships(void)
+void CHL2MPRules::InitDefaultAIRelationships(void)
 {
 	int i, j;
 
