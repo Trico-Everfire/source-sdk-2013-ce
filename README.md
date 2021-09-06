@@ -5,4 +5,4 @@ Current changes:
 - Re-enabled physgun
 - Added a new weapon, the "Nullifactor" from P2CE (WIP, need to code the proper effect)
 - Re-enabled jeep headlights (WIP, still need to get jeeps to spawn)
-- Added AI relationships
+- Added AI relationships from HL2
