@@ -1,8 +1,6 @@
-LightmappedGeneric
-{
-	$basetexture models\weapons\nullifactor
-	$surfaceprop metal
-	
+To add blood splatter to weapons, add this to the vmt:
+
+```
 	"$detail" "detail/blood_detail"
 	"$detailblendmode" "2"
 	"$detailblendfactor" "0.0"
@@ -14,4 +12,4 @@ LightmappedGeneric
 		{
 		}
 	}
-}
+```

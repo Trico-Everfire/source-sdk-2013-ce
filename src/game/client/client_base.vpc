@@ -210,6 +210,7 @@ $Project
 		$File	"$SRCDIR\game\shared\baseviewmodel_shared.cpp"
 		$File	"beamdraw.cpp"
 		$File	"$SRCDIR\game\shared\beam_shared.cpp"
+		$File	"bloodoverlayproxy.cpp"
 		$File	"$SRCDIR\public\bone_accessor.cpp"
 		$File	"bone_merge_cache.cpp"
 		$File	"c_ai_basehumanoid.cpp"

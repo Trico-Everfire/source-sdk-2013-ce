@@ -6,7 +6,7 @@
 	"$envmapmask" "Models/Weapons/V_physcannon/v_physcannon_mask"
 	"$envmapcontrast" ".7"
 	"$envmapsaturation" "[.8 .8 .8]"
-
-
+	
+	
 }
 	

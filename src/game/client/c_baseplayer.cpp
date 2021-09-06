@@ -296,6 +296,8 @@ END_RECV_TABLE()
 
 		RecvPropString( RECVINFO(m_szLastPlaceName) ),
 
+		RecvPropBool( RECVINFO(m_bShouldDrawBloodOverlay) ),
+
 #if defined USES_ECON_ITEMS
 		RecvPropUtlVector( RECVINFO_UTLVECTOR( m_hMyWearables ), MAX_WEARABLES_SENT_FROM_SERVER,	RecvPropEHandle(NULL, 0, 0) ),
 #endif
@@ -440,6 +442,8 @@ C_BasePlayer::C_BasePlayer() : m_iv_vecViewOffset( "C_BasePlayer::m_iv_vecViewOf
 
 	m_nForceVisionFilterFlags = 0;
 	m_nLocalPlayerVisionFlags = 0;
+
+	m_bShouldDrawBloodOverlay = false;
 
 	ListenForGameEvent( "base_player_teleported" );
 }

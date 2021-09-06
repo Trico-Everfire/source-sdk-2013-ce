@@ -158,6 +158,8 @@ public:
 	void ResetObserverMode();
 	bool IsBot( void ) const { return false; }
 
+	bool m_bShouldDrawBloodOverlay;
+
 	// Eye position..
 	virtual Vector		 EyePosition();
 	virtual const QAngle &EyeAngles();		// Direction of eyes

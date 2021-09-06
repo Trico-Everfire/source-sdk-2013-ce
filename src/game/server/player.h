@@ -238,6 +238,8 @@ class CBasePlayer : public CBaseCombatCharacter
 {
 public:
 	DECLARE_CLASS( CBasePlayer, CBaseCombatCharacter );
+	// Have we been hit or have blood splatted on us?
+	CNetworkVar(bool, m_bShouldDrawBloodOverlay);
 protected:
 	// HACK FOR BOTS
 	friend class CBotManager;
