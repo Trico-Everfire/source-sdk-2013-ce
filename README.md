@@ -11,5 +11,5 @@ Current changes:
 - Projected textures can use a resolution larger than the screen
 - Projected textures can actually have a custom texture (lives up to the name)
 - Visual shader editor (run with `-shaderedit`)
-- Glow effect can be applied to any subclass of CBaseAnimating
+- Glowing outline effect can be applied to any subclass of CBaseAnimating
 - Implemented a few ambient_generic fixes from the VDC
