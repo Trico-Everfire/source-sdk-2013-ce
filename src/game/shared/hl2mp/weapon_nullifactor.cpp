@@ -9,8 +9,10 @@
 #include "in_buttons.h"
 
 #ifdef CLIENT_DLL
+	#include "c_basecombatcharacter.h"
 	#include "c_hl2mp_player.h"
 #else
+	#include "basecombatcharacter.h"
 	#include "hl2mp_player.h"
 #endif
 
@@ -32,6 +34,11 @@ public:
 	CWeaponNullifactor( void );
 
 	void	PrimaryAttack( void );
+	void	ItemPreFrame( void ) override;
+#ifndef CLIENT_DLL
+	void	Delete(void) override;
+	void	Kill(void) override;
+#endif // !CLIENT_DLL
 	DECLARE_NETWORKCLASS(); 
 	DECLARE_PREDICTABLE();
 
@@ -42,6 +49,9 @@ public:
 private:
 	
 	CWeaponNullifactor( const CWeaponNullifactor & );
+
+	CBaseEntity* pThingToNullifact;
+	int m_timeToNullifaction;
 };
 
 IMPLEMENT_NETWORKCLASS_ALIASED( WeaponNullifactor, DT_WeaponNullifactor )
@@ -82,6 +92,8 @@ CWeaponNullifactor::CWeaponNullifactor( void )
 {
 	m_bReloadsSingly	= false;
 	m_bFiresUnderwater	= true;
+	pThingToNullifact	= NULL;
+	m_timeToNullifaction= -1;
 }
 
 //-----------------------------------------------------------------------------
@@ -89,10 +101,9 @@ CWeaponNullifactor::CWeaponNullifactor( void )
 //-----------------------------------------------------------------------------
 void CWeaponNullifactor::PrimaryAttack( void )
 {
-	// Only the player fires this way so we can cast
-	CBasePlayer *pPlayer = ToBasePlayer( GetOwner() );
+	CBaseCombatCharacter *pCharacter = ToBasePlayer( GetOwner() );
 
-	if ( !pPlayer )
+	if ( !pCharacter )
 	{
 		return;
 	}
@@ -112,25 +123,49 @@ void CWeaponNullifactor::PrimaryAttack( void )
 		return;
 	}
 
+	// Only the player fires this way so we can cast
+	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
+
+#ifndef CLIENT_DLL
+	// Create Vector for direction
+	Vector vecDir;
+
+	// Take the Player's EyeAngles and turn it into a direction
+	AngleVectors(pPlayer->EyeAngles(), &vecDir);
+
+	// Get the Start/End
+	Vector vecAbsStart = pPlayer->EyePosition();
+	Vector vecAbsEnd = vecAbsStart + (vecDir * MAX_TRACE_LENGTH);
+
+	trace_t tr; // Create our trace_t class to hold the end result
+	// Do the TraceLine, and write our results to our trace_t class, tr.
+	UTIL_TraceLine(vecAbsStart, vecAbsEnd, MASK_ALL, pPlayer, COLLISION_GROUP_NONE, &tr);
+
+	// Do something with the end results
+	if (tr.m_pEnt)
+	{
+		if (tr.m_pEnt->IsNPC() || tr.m_pEnt->IsPlayer())
+		{
+			((CBaseCombatCharacter*)tr.m_pEnt)->AddGlowEffect();
+			pPlayer->AddGlowEffect();
+			pThingToNullifact = tr.m_pEnt;
+			m_timeToNullifaction = gpGlobals->curtime + 5.0;
+		}
+	}
+#else
+	EmitSound("Weapon_Nullifactor.Prefire");
+#endif
+
 	WeaponSound( SINGLE );
 	pPlayer->DoMuzzleFlash();
 
 	SendWeaponAnim( ACT_VM_PRIMARYATTACK );
 	pPlayer->SetAnimation( PLAYER_ATTACK1 );
 
-	m_flNextPrimaryAttack = gpGlobals->curtime + 0.75;
-	m_flNextSecondaryAttack = gpGlobals->curtime + 0.75;
+	m_flNextPrimaryAttack = gpGlobals->curtime + 5.0;
+	m_flNextSecondaryAttack = gpGlobals->curtime + 5.0;
 
 	m_iClip1--;
-
-	Vector vecSrc		= pPlayer->Weapon_ShootPosition();
-	Vector vecAiming	= pPlayer->GetAutoaimVector( AUTOAIM_5DEGREES );	
-
-	FireBulletsInfo_t info( 1, vecSrc, vecAiming, vec3_origin, MAX_TRACE_LENGTH, m_iPrimaryAmmoType );
-	info.m_pAttacker = pPlayer;
-
-	// Fire the bullets, and force the first shot to be perfectly accuracy
-	pPlayer->FireBullets( info );
 
 	//Disorient the player
 	QAngle angles = pPlayer->GetLocalAngles();
@@ -151,3 +186,35 @@ void CWeaponNullifactor::PrimaryAttack( void )
 		pPlayer->SetSuitUpdate( "!HEV_AMO0", FALSE, 0 ); 
 	}
 }
+
+void CWeaponNullifactor::ItemPreFrame(void)
+{
+#ifndef CLIENT_DLL
+	if (m_timeToNullifaction < 0) return;
+	if (gpGlobals->curtime > m_timeToNullifaction)
+	{
+		pThingToNullifact->InputKill(inputdata_t());
+		m_timeToNullifaction = -1;
+		pThingToNullifact = NULL;
+		ToBasePlayer(GetOwner())->RemoveGlowEffect();
+	}
+#endif
+}
+
+#ifndef CLIENT_DLL
+void CWeaponNullifactor::Delete(void)
+{
+	m_timeToNullifaction = -1;
+	if (dynamic_cast<CBaseCombatCharacter*>(pThingToNullifact))
+	{
+		ToBasePlayer(GetOwner())->RemoveGlowEffect();
+		dynamic_cast<CBaseCombatCharacter*>(pThingToNullifact)->RemoveGlowEffect();
+	}
+	pThingToNullifact = NULL;
+}
+
+void CWeaponNullifactor::Kill(void)
+{
+	Delete();
+}
+#endif // !CLIENT_DLL

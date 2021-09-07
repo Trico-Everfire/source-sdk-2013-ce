@@ -65,10 +65,17 @@ extern ConVar replay_rendersetting_renderglow;
 #include "econ_item_description.h"
 #endif
 
+#include "clienteffectprecachesystem.h"
+
 // memdbgon must be the last include file in a .cpp file!!!
 #include "tier0/memdbgon.h"
 
 #define ACHIEVEMENT_ANNOUNCEMENT_MIN_TIME 10
+
+CLIENTEFFECT_REGISTER_BEGIN(PrecachePostProcessingEffectsGlow)
+CLIENTEFFECT_MATERIAL("dev/glow_color")
+CLIENTEFFECT_MATERIAL("dev/halo_add_to_screen")
+CLIENTEFFECT_REGISTER_END_CONDITIONAL(engine->GetDXSupportLevel() >= 90)
 
 class CHudWeaponSelection;
 class CHudChat;
@@ -788,7 +795,8 @@ bool ClientModeShared::DoPostScreenSpaceEffects( const CViewSetup *pSetup )
 		if ( !replay_rendersetting_renderglow.GetBool() )
 			return false;
 	}
-#endif 
+#endif
+	g_GlowObjectManager.RenderGlowEffects(pSetup, 0);
 	return true;
 }
 

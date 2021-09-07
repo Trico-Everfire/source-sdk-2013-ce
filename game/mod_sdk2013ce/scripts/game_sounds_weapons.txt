@@ -445,6 +445,15 @@
 	"wave"				")weapons/irifle/irifle_fire2.wav"
 }
 
+"Weapon_Nullifactor.Prefire"
+{
+	"channel"		"CHAN_WEAPON"
+	"volume"		"0.75"
+	"soundlevel"	"SNDLVL_NORM"
+
+	"wave"		"weapons/nullifactor/prefire.wav"
+}
+
 // weapon_physcannon.txt
 "Weapon_PhysCannon.Launch"
 {
