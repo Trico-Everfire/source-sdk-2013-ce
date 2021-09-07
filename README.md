@@ -4,7 +4,7 @@ Current changes:
 - Switched to MP branch only
 - Re-enabled physgun
 - Added a new weapon, the "Nullifactor" from P2CE
-- Re-enabled jeep headlights (WIP, still need to get jeeps to spawn)
+- Re-enabled jeep and jeep headlights
 - Added AI relationships from HL2
 - Deaths are now viewed in first person for a few seconds before switching to third-person again
 - Upped projected texture limit to 8
@@ -12,3 +12,4 @@ Current changes:
 - Projected textures can actually have a custom texture (lives up to the name)
 - Visual shader editor (run with `-shaderedit`)
 - Glow effect can be applied to any subclass of CBaseAnimating
+- Implemented a few ambient_generic fixes from the VDC
