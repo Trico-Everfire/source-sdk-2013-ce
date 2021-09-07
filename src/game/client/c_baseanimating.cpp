@@ -4829,9 +4829,17 @@ bool C_BaseAnimating::InitAsClientRagdoll( const matrix3x4_t *pDeltaBones0, cons
 //-----------------------------------------------------------------------------
 void C_BaseAnimating::GetGlowEffectColor(float* r, float* g, float* b)
 {
-	*r = 0.76f;
-	*g = 0.76f;
-	*b = 0.76f;
+	*r = m_cGlowColor.x;
+	*g = m_cGlowColor.y;
+	*b = m_cGlowColor.z;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::SetGlowEffectColor(float r, float g, float b) 
+{
+	m_cGlowColor = Vector(r, g, b);
 }
 
 //-----------------------------------------------------------------------------

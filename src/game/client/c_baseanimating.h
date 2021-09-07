@@ -117,6 +117,8 @@ public:
 	CGlowObject* GetGlowObject(void) { return m_pGlowEffect; }
 	virtual void		GetGlowEffectColor(float* r, float* g, float* b);
 	void				EnableGlowEffect(float r, float g, float b);
+	void				SetGlowEffectColor(float r, float g, float b);
+	Vector				m_cGlowColor = Vector(0.76f, 0.76f, 0.76f);
 
 	void				SetClientSideGlowEnabled(bool bEnabled) { m_bClientSideGlowEnabled = bEnabled; UpdateGlowEffect(); }
 	bool				IsClientSideGlowEnabled(void) { return m_bClientSideGlowEnabled; }
@@ -126,7 +128,7 @@ private:
 	bool				m_bClientSideGlowEnabled;	// client-side only value used for spectator
 	bool				m_bGlowEnabled;				// networked value
 	bool				m_bOldGlowEnabled;
-	CGlowObject* m_pGlowEffect;
+	CGlowObject*		m_pGlowEffect;
 public:
 
 	bool UsesPowerOfTwoFrameBufferTexture( void );

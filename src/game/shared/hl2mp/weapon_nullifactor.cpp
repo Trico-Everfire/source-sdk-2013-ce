@@ -126,7 +126,7 @@ void CWeaponNullifactor::PrimaryAttack( void )
 	// Only the player fires this way so we can cast
 	CBasePlayer* pPlayer = ToBasePlayer(GetOwner());
 
-#ifndef CLIENT_DLL
+
 	// Create Vector for direction
 	Vector vecDir;
 
@@ -144,22 +144,27 @@ void CWeaponNullifactor::PrimaryAttack( void )
 	// Do something with the end results
 	if (tr.m_pEnt)
 	{
-		if (tr.m_pEnt->IsNPC() || tr.m_pEnt->IsPlayer())
+		if (CBaseAnimating* CBAEntity = dynamic_cast<CBaseAnimating*>(tr.m_pEnt))
 		{
-			((CBaseAnimating*)tr.m_pEnt)->AddGlowEffect();
+			
+#ifdef CLIENT_DLL
+			//CBAEntity->GetGlowObject()->SetColor(Vector(123,252,3));
+			//pPlayer->GetGlowObject()->SetColor(Vector(245, 58, 51));
+			//(float)(123 / 255), (float)(252 / 255), (float)(3 / 255)
+			//(float)(245 / 255), (float)(58 / 255), (float)(51 / 255)
+			CBAEntity->SetGlowEffectColor(0.25f, 0.1f, 0.6f);
+			pPlayer->SetGlowEffectColor(0.75f, 0.5f, 0.2f);
+#else
+			CBAEntity->AddGlowEffect();
 			pPlayer->AddGlowEffect();
-			pThingToNullifact = tr.m_pEnt;
+			pThingToNullifact = CBAEntity;
 			m_timeToNullifaction = gpGlobals->curtime + 5.0;
-		}
-		else if (dynamic_cast<CBaseAnimating*>(tr.m_pEnt))
-		{
-			((CBaseAnimating*)tr.m_pEnt)->AddGlowEffect();
-			pPlayer->AddGlowEffect();
-			pThingToNullifact = tr.m_pEnt;
-			m_timeToNullifaction = gpGlobals->curtime + 5.0;
+#endif
 		}
 	}
-#else
+
+
+#ifdef CLIENT_DLL
 	EmitSound("Weapon_Nullifactor.Prefire");
 #endif
 
