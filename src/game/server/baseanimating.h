@@ -54,6 +54,16 @@ public:
 	virtual int	 Restore( IRestore &restore );
 	virtual void OnRestore();
 
+	// Glows
+	void				AddGlowEffect(void);
+	void				RemoveGlowEffect(void);
+	bool				IsGlowEffectActive(void);
+	void				UpdateGlowEffect(void);
+	void				DestroyGlowEffect(void);
+protected:
+	CNetworkVar(bool, m_bGlowEnabled);
+public:
+
 	CStudioHdr *GetModelPtr( void );
 	void InvalidateMdlCache();
 

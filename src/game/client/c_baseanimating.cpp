@@ -173,6 +173,8 @@ void RecvProxy_Sequence( const CRecvProxyData *pData, void *pStruct, void *pOut 
 }
 
 IMPLEMENT_CLIENTCLASS_DT(C_BaseAnimating, DT_BaseAnimating, CBaseAnimating)
+	RecvPropBool(RECVINFO(m_bGlowEnabled)),
+
 	RecvPropInt(RECVINFO(m_nSequence), 0, RecvProxy_Sequence),
 	RecvPropInt(RECVINFO(m_nForceBone)),
 	RecvPropVector(RECVINFO(m_vecForce)),
@@ -680,6 +682,11 @@ C_BaseAnimating::C_BaseAnimating() :
 	
 	m_ClientSideAnimationListHandle = INVALID_CLIENTSIDEANIMATION_LIST_HANDLE;
 
+	m_pGlowEffect = NULL;
+	m_bGlowEnabled = false;
+	m_bOldGlowEnabled = false;
+	m_bClientSideGlowEnabled = false;
+
 	m_nPrevSequence = -1;
 	m_nRestoreSequence = -1;
 	m_pRagdoll		= NULL;
@@ -749,6 +756,8 @@ C_BaseAnimating::C_BaseAnimating() :
 //-----------------------------------------------------------------------------
 C_BaseAnimating::~C_BaseAnimating()
 {
+	DestroyGlowEffect();
+
 	int i = g_PreviousBoneSetups.Find( this );
 	if ( i != -1 )
 		g_PreviousBoneSetups.FastRemove( i );
@@ -4611,6 +4620,8 @@ void C_BaseAnimating::OnPreDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnPreDataChanged( updateType );
 
+	m_bOldGlowEnabled = m_bGlowEnabled;
+
 	m_bLastClientSideFrameReset = m_bClientSideFrameReset;
 }
 
@@ -4813,7 +4824,62 @@ bool C_BaseAnimating::InitAsClientRagdoll( const matrix3x4_t *pDeltaBones0, cons
 	return true;
 }
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::GetGlowEffectColor(float* r, float* g, float* b)
+{
+	*r = 0.76f;
+	*g = 0.76f;
+	*b = 0.76f;
+}
 
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::EnableGlowEffect(float r, float g, float b)
+{
+	// destroy the existing effect
+	if (m_pGlowEffect)
+	{
+		DestroyGlowEffect();
+	}
+
+	m_pGlowEffect = new CGlowObject(this, Vector(r, g, b), 1.0, true);
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::UpdateGlowEffect(void)
+{
+	// destroy the existing effect
+	if (m_pGlowEffect)
+	{
+		DestroyGlowEffect();
+	}
+
+	// create a new effect
+	if (m_bGlowEnabled || m_bClientSideGlowEnabled)
+	{
+		float r, g, b;
+		GetGlowEffectColor(&r, &g, &b);
+
+		m_pGlowEffect = new CGlowObject(this, Vector(r, g, b), 1.0, true);
+	}
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+void C_BaseAnimating::DestroyGlowEffect(void)
+{
+	if (m_pGlowEffect)
+	{
+		delete m_pGlowEffect;
+		m_pGlowEffect = NULL;
+	}
+}
 
 //-----------------------------------------------------------------------------
 // Purpose: 
@@ -4840,7 +4906,10 @@ void C_BaseAnimating::OnDataChanged( DataUpdateType_t updateType )
 		m_nRestoreSequence = -1;
 	}
 
-
+	if (m_bOldGlowEnabled != m_bGlowEnabled)
+	{
+		UpdateGlowEffect();
+	}
 
 	bool modelchanged = false;
 

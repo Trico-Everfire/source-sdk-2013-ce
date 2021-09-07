@@ -1177,6 +1177,7 @@ void CBreakableProp::Event_Killed( const CTakeDamageInfo &info )
 	}
 	Break( info.GetInflictor(), info );
 	BaseClass::Event_Killed( info );
+	RemoveGlowEffect();
 }
 
 //-----------------------------------------------------------------------------

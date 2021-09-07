@@ -146,7 +146,14 @@ void CWeaponNullifactor::PrimaryAttack( void )
 	{
 		if (tr.m_pEnt->IsNPC() || tr.m_pEnt->IsPlayer())
 		{
-			((CBaseCombatCharacter*)tr.m_pEnt)->AddGlowEffect();
+			((CBaseAnimating*)tr.m_pEnt)->AddGlowEffect();
+			pPlayer->AddGlowEffect();
+			pThingToNullifact = tr.m_pEnt;
+			m_timeToNullifaction = gpGlobals->curtime + 5.0;
+		}
+		else if (dynamic_cast<CBaseAnimating*>(tr.m_pEnt))
+		{
+			((CBaseAnimating*)tr.m_pEnt)->AddGlowEffect();
 			pPlayer->AddGlowEffect();
 			pThingToNullifact = tr.m_pEnt;
 			m_timeToNullifaction = gpGlobals->curtime + 5.0;
@@ -193,10 +200,14 @@ void CWeaponNullifactor::ItemPreFrame(void)
 	if (m_timeToNullifaction < 0) return;
 	if (gpGlobals->curtime > m_timeToNullifaction)
 	{
+		ToBasePlayer(GetOwner())->RemoveGlowEffect();
+		if (auto* nullifacted = dynamic_cast<CBasePlayer*>(pThingToNullifact))
+		{
+			ToBasePlayer(GetOwner())->IncrementFragCount(1);
+		}
 		pThingToNullifact->InputKill(inputdata_t());
 		m_timeToNullifaction = -1;
 		pThingToNullifact = NULL;
-		ToBasePlayer(GetOwner())->RemoveGlowEffect();
 	}
 #endif
 }
@@ -205,10 +216,10 @@ void CWeaponNullifactor::ItemPreFrame(void)
 void CWeaponNullifactor::Delete(void)
 {
 	m_timeToNullifaction = -1;
-	if (dynamic_cast<CBaseCombatCharacter*>(pThingToNullifact))
+	if (auto* nullifacted = dynamic_cast<CBaseCombatCharacter*>(pThingToNullifact))
 	{
 		ToBasePlayer(GetOwner())->RemoveGlowEffect();
-		dynamic_cast<CBaseCombatCharacter*>(pThingToNullifact)->RemoveGlowEffect();
+		nullifacted->RemoveGlowEffect();
 	}
 	pThingToNullifact = NULL;
 }

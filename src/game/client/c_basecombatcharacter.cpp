@@ -29,13 +29,6 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 	{
 		m_iAmmo.Set( i, 0 );
 	}
-
-
-	m_pGlowEffect = NULL;
-	m_bGlowEnabled = false;
-	m_bOldGlowEnabled = false;
-	m_bClientSideGlowEnabled = false;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -43,9 +36,6 @@ C_BaseCombatCharacter::C_BaseCombatCharacter()
 //-----------------------------------------------------------------------------
 C_BaseCombatCharacter::~C_BaseCombatCharacter()
 {
-
-	DestroyGlowEffect();
-
 }
 
 /*
@@ -64,10 +54,6 @@ int	C_BaseCombatCharacter::GetAmmoCount( char *szName ) const
 void C_BaseCombatCharacter::OnPreDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnPreDataChanged( updateType );
-
-
-	m_bOldGlowEnabled = m_bGlowEnabled;
-
 }
 
 //-----------------------------------------------------------------------------
@@ -76,13 +62,6 @@ void C_BaseCombatCharacter::OnPreDataChanged( DataUpdateType_t updateType )
 void C_BaseCombatCharacter::OnDataChanged( DataUpdateType_t updateType )
 {
 	BaseClass::OnDataChanged( updateType );
-
-
-	if ( m_bOldGlowEnabled != m_bGlowEnabled )
-	{
-		UpdateGlowEffect();
-	}
-
 }
 
 //-----------------------------------------------------------------------------
@@ -103,65 +82,6 @@ void C_BaseCombatCharacter::DoMuzzleFlash()
 	}
 }
 
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseCombatCharacter::GetGlowEffectColor( float *r, float *g, float *b )
-{
-	*r = 0.76f;
-	*g = 0.76f;
-	*b = 0.76f;
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseCombatCharacter::EnableGlowEffect( float r, float g, float b )
-{
-	// destroy the existing effect
-	if ( m_pGlowEffect )
-	{
-		DestroyGlowEffect();
-	}
-
-	m_pGlowEffect = new CGlowObject( this, Vector( r, g, b ), 1.0, true );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseCombatCharacter::UpdateGlowEffect( void )
-{
-	// destroy the existing effect
-	if ( m_pGlowEffect )
-	{
-		DestroyGlowEffect();
-	}
-
-	// create a new effect
-	if ( m_bGlowEnabled || m_bClientSideGlowEnabled )
-	{
-		float r, g, b;
-		GetGlowEffectColor( &r, &g, &b );
-
-		m_pGlowEffect = new CGlowObject( this, Vector( r, g, b ), 1.0, true );
-	}
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void C_BaseCombatCharacter::DestroyGlowEffect( void )
-{
-	if ( m_pGlowEffect )
-	{
-		delete m_pGlowEffect;
-		m_pGlowEffect = NULL;
-	}
-}
-
-
 IMPLEMENT_CLIENTCLASS(C_BaseCombatCharacter, DT_BaseCombatCharacter, CBaseCombatCharacter);
 
 // Only send active weapon index to local player
@@ -174,8 +94,6 @@ BEGIN_RECV_TABLE(C_BaseCombatCharacter, DT_BaseCombatCharacter)
 	RecvPropDataTable( "bcc_localdata", 0, 0, &REFERENCE_RECV_TABLE(DT_BCCLocalPlayerExclusive) ),
 	RecvPropEHandle( RECVINFO( m_hActiveWeapon ) ),
 	RecvPropArray3( RECVINFO_ARRAY(m_hMyWeapons), RecvPropEHandle( RECVINFO( m_hMyWeapons[0] ) ) ),
-
-	RecvPropBool( RECVINFO( m_bGlowEnabled ) ),
 
 
 #ifdef INVASION_CLIENT_DLL

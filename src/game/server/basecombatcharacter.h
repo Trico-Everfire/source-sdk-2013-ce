@@ -412,11 +412,6 @@ public:
 	// -----------------------
 	virtual void		OnPursuedBy( INextBot * RESTRICT pPursuer ){} // called every frame while pursued by a bot in DirectChase.
 
-	// Glows
-	void				AddGlowEffect( void );
-	void				RemoveGlowEffect( void );
-	bool				IsGlowEffectActive( void );
-
 #ifdef INVASION_DLL
 public:
 
@@ -455,15 +450,8 @@ public:
 	CNetworkVar( float, m_flNextAttack );			// cannot attack again until this time
 
 
-protected:
-	CNetworkVar( bool, m_bGlowEnabled );
-
-
 public:
 	Hull_t		m_eHull;
-
-	void				UpdateGlowEffect( void );
-	void				DestroyGlowEffect( void );
 
 protected:
 	int			m_bloodColor;			// color of blood particless

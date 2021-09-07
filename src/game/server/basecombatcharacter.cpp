@@ -191,8 +191,6 @@ END_SEND_TABLE();
 //-----------------------------------------------------------------------------
 IMPLEMENT_SERVERCLASS_ST(CBaseCombatCharacter, DT_BaseCombatCharacter)
 
-	SendPropBool( SENDINFO( m_bGlowEnabled ) ),
-
 	// Data that only gets sent to the local player.
 	SendPropDataTable( "bcc_localdata", 0, &REFERENCE_SEND_TABLE(DT_BCCLocalPlayerExclusive), SendProxy_SendBaseCombatCharacterLocalDataTable ),
 
@@ -743,8 +741,6 @@ CBaseCombatCharacter::CBaseCombatCharacter( void )
 	m_impactEnergyScale = 1.0f;
 
 	m_bForceServerRagdoll = ai_force_serverside_ragdoll.GetBool();
-
-	m_bGlowEnabled.Set( false );
 }
 
 //------------------------------------------------------------------------------
@@ -3239,32 +3235,6 @@ float CBaseCombatCharacter::GetSpreadBias( CBaseCombatWeapon *pWeapon, CBaseEnti
 	if ( pWeapon )
 		return pWeapon->GetSpreadBias(GetCurrentWeaponProficiency());
 	return 1.0;
-}
-
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CBaseCombatCharacter::AddGlowEffect( void )
-{
-	SetTransmitState( FL_EDICT_ALWAYS );
-	m_bGlowEnabled.Set( true );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-void CBaseCombatCharacter::RemoveGlowEffect( void )
-{
-	m_bGlowEnabled.Set( false );
-}
-
-//-----------------------------------------------------------------------------
-// Purpose: 
-//-----------------------------------------------------------------------------
-bool CBaseCombatCharacter::IsGlowEffectActive( void )
-{
-	return m_bGlowEnabled;
 }
 
 
