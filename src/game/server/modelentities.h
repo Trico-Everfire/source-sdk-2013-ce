@@ -59,5 +59,50 @@ public:
 	virtual bool IsOn( void ) const;
 };
 
+//-----------------------------------------------------------------------------
+// Purpose: basic scalable solid geometry
+// enabled state:	brush is visible
+// disabled state:	brush not visible
+//-----------------------------------------------------------------------------
+class CFuncScalable : public CBaseEntity
+{
+public:
+	DECLARE_CLASS(CFuncScalable, CBaseEntity);
+
+	virtual void Spawn(void);
+	bool CreateVPhysics(void);
+
+	virtual int	ObjectCaps(void) { return HasSpawnFlags(SF_IGNORE_PLAYERUSE) ? BaseClass::ObjectCaps() : BaseClass::ObjectCaps() | FCAP_IMPULSE_USE; }
+
+	virtual int DrawDebugTextOverlays(void);
+
+	virtual void TurnOff(void);
+	virtual void TurnOn(void);
+
+	// Input handlers
+	void InputTurnOff(inputdata_t& inputdata);
+	void InputTurnOn(inputdata_t& inputdata);
+	void InputToggle(inputdata_t& inputdata);
+	void InputSetExcluded(inputdata_t& inputdata);
+	void InputSetInvert(inputdata_t& inputdata);
+
+	enum BrushSolidities_e {
+		BRUSHSOLID_TOGGLE = 0,
+		BRUSHSOLID_NEVER = 1,
+		BRUSHSOLID_ALWAYS = 2,
+	};
+
+	BrushSolidities_e m_iSolidity;
+	int m_iDisabled;
+	bool m_bSolidBsp;
+	string_t m_iszExcludedClass;
+	bool m_bInvertExclusion;
+
+	DECLARE_DATADESC();
+
+	virtual bool IsOn(void) const;
+};
+
+
 
 #endif // MODELENTITIES_H

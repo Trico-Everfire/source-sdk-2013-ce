@@ -13,7 +13,7 @@
 #include "tier0/memdbgon.h"
 
 extern ConVar ent_debugkeys;
-extern ConVar	showtriggers;
+extern ConVar showtriggers;
 
 
 
@@ -194,6 +194,186 @@ void CFuncBrush::TurnOn( void )
 bool CFuncBrush::IsOn( void ) const
 {
 	return !IsEffectActive( EF_NODRAW );
+}
+
+
+LINK_ENTITY_TO_CLASS(func_scalable, CFuncScalable);
+
+BEGIN_DATADESC(CFuncScalable)
+
+DEFINE_INPUTFUNC(FIELD_VOID, "Enable", InputTurnOn),
+DEFINE_INPUTFUNC(FIELD_VOID, "Disable", InputTurnOff),
+DEFINE_INPUTFUNC(FIELD_VOID, "Toggle", InputToggle),
+DEFINE_KEYFIELD(m_iDisabled, FIELD_INTEGER, "StartDisabled"),
+DEFINE_KEYFIELD(m_iSolidity, FIELD_INTEGER, "Solidity"),
+DEFINE_KEYFIELD(m_bSolidBsp, FIELD_BOOLEAN, "solidbsp"),
+DEFINE_KEYFIELD(m_iszExcludedClass, FIELD_STRING, "excludednpc"),
+DEFINE_KEYFIELD(m_bInvertExclusion, FIELD_BOOLEAN, "invert_exclusion"),
+
+DEFINE_INPUTFUNC(FIELD_STRING, "SetExcluded", InputSetExcluded),
+DEFINE_INPUTFUNC(FIELD_BOOLEAN, "SetInvert", InputSetInvert),
+
+END_DATADESC()
+
+
+void CFuncScalable::Spawn(void)
+{
+	SetMoveType(MOVETYPE_PUSH);  // so it doesn't get pushed by anything
+
+	SetSolid(SOLID_VPHYSICS);
+	AddEFlags(EFL_USE_PARTITION_WHEN_NOT_SOLID);
+
+	if (m_iSolidity == BRUSHSOLID_NEVER)
+	{
+		AddSolidFlags(FSOLID_NOT_SOLID);
+	}
+
+	SetModel(STRING(GetModelName()));
+
+	if (m_iDisabled)
+		TurnOff();
+
+	// If it can't move/go away, it's really part of the world
+	if (!GetEntityName() || !m_iParent)
+		AddFlag(FL_WORLDBRUSH);
+
+	CreateVPhysics();
+
+	// Slam the object back to solid - if we really want it to be solid.
+	if (m_bSolidBsp)
+	{
+		SetSolid(SOLID_BSP);
+	}
+}
+
+//-----------------------------------------------------------------------------
+
+bool CFuncScalable::CreateVPhysics(void)
+{
+	// NOTE: Don't init this static.  It's pretty common for these to be constrained
+	// and dynamically parented.  Initing shadow avoids having to destroy the physics
+	// object later and lose the constraints.
+	IPhysicsObject* pPhys = VPhysicsInitShadow(false, false);
+	if (pPhys)
+	{
+		int contents = modelinfo->GetModelContents(GetModelIndex());
+		if (!(contents & (MASK_SOLID | MASK_PLAYERSOLID | MASK_NPCSOLID)))
+		{
+			// leave the physics shadow there in case it has crap constrained to it
+			// but disable collisions with it
+			pPhys->EnableCollisions(false);
+		}
+	}
+	return true;
+}
+
+//-----------------------------------------------------------------------------
+// Purpose: 
+//-----------------------------------------------------------------------------
+int CFuncScalable::DrawDebugTextOverlays(void)
+{
+	int nOffset = BaseClass::DrawDebugTextOverlays();
+
+	if (m_debugOverlays & OVERLAY_TEXT_BIT)
+	{
+		char tempstr[512];
+		Q_snprintf(tempstr, sizeof(tempstr), "angles: %g %g %g", (double)GetLocalAngles()[PITCH], (double)GetLocalAngles()[YAW], (double)GetLocalAngles()[ROLL]);
+		EntityText(nOffset, tempstr, 0);
+		nOffset++;
+	}
+
+	return nOffset;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for toggling the hidden/shown state of the brush.
+//-----------------------------------------------------------------------------
+void CFuncScalable::InputToggle(inputdata_t& inputdata)
+{
+	if (IsOn())
+	{
+		TurnOff();
+		return;
+	}
+
+	TurnOn();
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for hiding the brush.
+//-----------------------------------------------------------------------------
+void CFuncScalable::InputTurnOff(inputdata_t& inputdata)
+{
+	TurnOff();
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Input handler for showing the brush.
+//-----------------------------------------------------------------------------
+void CFuncScalable::InputTurnOn(inputdata_t& inputdata)
+{
+	TurnOn();
+}
+
+
+//-----------------------------------------------------------------------------
+// 
+//-----------------------------------------------------------------------------
+void CFuncScalable::InputSetExcluded(inputdata_t& inputdata)
+{
+	m_iszExcludedClass = inputdata.value.StringID();
+}
+
+//-----------------------------------------------------------------------------
+// 
+//-----------------------------------------------------------------------------
+void CFuncScalable::InputSetInvert(inputdata_t& inputdata)
+{
+	m_bInvertExclusion = inputdata.value.Bool();
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Hides the brush.
+//-----------------------------------------------------------------------------
+void CFuncScalable::TurnOff(void)
+{
+	if (!IsOn())
+		return;
+
+	if (m_iSolidity != BRUSHSOLID_ALWAYS)
+	{
+		AddSolidFlags(FSOLID_NOT_SOLID);
+	}
+
+	AddEffects(EF_NODRAW);
+	m_iDisabled = TRUE;
+}
+
+
+//-----------------------------------------------------------------------------
+// Purpose: Shows the brush.
+//-----------------------------------------------------------------------------
+void CFuncScalable::TurnOn(void)
+{
+	if (IsOn())
+		return;
+
+	if (m_iSolidity != BRUSHSOLID_NEVER)
+	{
+		RemoveSolidFlags(FSOLID_NOT_SOLID);
+	}
+
+	RemoveEffects(EF_NODRAW);
+}
+
+
+bool CFuncScalable::IsOn(void) const
+{
+	return !IsEffectActive(EF_NODRAW);
 }
 
 
