@@ -120,12 +120,12 @@ struct LightingValue_t
 
 	FORCEINLINE bool IsValid( void ) const
 	{
-		return ( m_vecLighting.x >= 0 && 
-				 m_vecLighting.y >= 0 && 
+		return (m_vecLighting.x >= 0 &&
+				 m_vecLighting.y >= 0 &&
 				 m_vecLighting.z >= 0 &&
-				 m_vecLighting.x < 1e10 && 
-				 m_vecLighting.y < 1e10 && 
-				 m_vecLighting.z < 1e10 );
+				 m_vecLighting.x < 1e10 &&
+				 m_vecLighting.y < 1e10 &&
+				 m_vecLighting.z < 1e10 );;
 	}
 
 	FORCEINLINE void Zero( void )
