@@ -278,7 +278,7 @@ extern "C"
         return pMemOut;
     }
 
-    size_t _msize_base(void* pMem)
+    size_t _msize_base(void* pMem) _CRT_NOEXCEPT
     {
         return g_pMemAlloc->GetSize(pMem);
     }
